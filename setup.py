@@ -10,7 +10,4 @@ setuptools.setup(
     url="https://github.com/johnbensnyder/tensorflow_extras",
     packages=setuptools.find_packages(),
     python_requires='>=3.6',
-    install_requires=[
-        "tensorflow >= 2.0",
-    ]
 )
