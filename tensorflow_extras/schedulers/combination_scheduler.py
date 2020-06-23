@@ -25,21 +25,22 @@ class CombinationScheduler(LearningRateSchedule):
             break_points = [break_points]
         assert len(break_points)+1==len(schedulers), \
                 "Number of schedulers must be one longer than break points"
-        self.break_points = break_points
-        self.break_points.append(-1)
-        self.schedulers = schedulers
         self.dtype = dtype
+        break_points.append(-1)
+        self.break_points = tf.constant(break_points, dtype=self.dtype)
+        self.schedulers = schedulers
         self.schedule_pos = 0
-        self.next_breakpoint = 0
         self.offset = tf.constant(0, dtype=self.dtype)
-        
+    
+    @tf.function(autograph=False)
     def __call__(self, step):
         global_step_recomp = tf.cast(step, self.dtype)
-        if step==self.break_points[self.next_breakpoint]:
-            self.offset = tf.cast(self.break_points[self.next_breakpoint], self.dtype)
-            self.next_breakpoint+=1
-            self.schedule_pos+=1
-        return self.schedulers[self.schedule_pos](global_step_recomp - self.offset)
+        if global_step_recomp==self.break_points[self.schedule_pos]:
+            self.offset = self.break_points[self.schedule_pos]
+            self.schedule_pos += 1
+        learning_rates = tf.stack([scheduler(global_step_recomp - self.offset) \
+                                   for scheduler in self.schedulers])
+        return tf.gather(learning_rates, self.schedule_pos)
     
     def get_config(self):
         scheduler_config = {'scheduler_configs': 

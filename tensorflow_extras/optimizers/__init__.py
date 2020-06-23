@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # -*- coding: utf-8 -*-
 
-from . import schedulers
-from . import optimizers
-__version__ = '0.0.1.1'
-__all__ = ['__version__', 'schedulers', 'optimizers']
+from tensorflow_extras.optimizers.rmspropw import RMSpropW
+
+__all__ = [
+    'RMSpropW'
+]
