@@ -4,5 +4,6 @@
 
 from . import schedulers
 from . import optimizers
+from . import utils
 __version__ = '0.0.1.1'
 __all__ = ['__version__', 'schedulers', 'optimizers']
